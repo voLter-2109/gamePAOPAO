@@ -70,6 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // делигирование событий
   let x = [];
+  let y = [];
   let gamePlace = document
     .querySelector(".gamePlace")
     .addEventListener("click", function (event) {
@@ -78,13 +79,16 @@ document.addEventListener("DOMContentLoaded", () => {
         event.target.classList.add("grey");
         x.push(event.target.mynamber);
         console.log("номер на иконке:" + x);
+        y.push(event.target.repiat);
+        console.log("номер на иконке:" + y);
       }
       // проверка условий при нажатии на блоки
       if (x.length === 2) {
-        if (x[0] !== x[1]) {
+        if (x[0] !== x[1] || y[0] === y[1]) {
           console.log("error");
           setTimeout(removeClass, 300);
           x = [];
+          y = [];
         } else {
           console.log("ok");
           document.querySelectorAll(".primer").forEach(function (item, i) {
@@ -98,6 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
           });
         }
         x = [];
+        y = [];
       }
     });
 
