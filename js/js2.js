@@ -1,93 +1,107 @@
 "use strict";
 
 document.addEventListener("DOMContentLoaded", () => {
+  let gamePlace = document.querySelector(".gamePlace");
   let select = document.querySelector(".form-select");
-  select.addEventListener("change", function () {
-    let x = Number(select.options[select.selectedIndex].value);
+  let amountBlock;
+  let primer;
 
-    //  удалить все блоки при выборе нового размера поля
-    document.querySelectorAll(".primer").forEach((item) => {
-      item.remove();
-    });
+  // изменение кол-ва блоков в зависимости от выбора
+  select.addEventListener("change", function (e) {
+    // было
+    // amountBlock = select.options[select.selectedIndex].value;
+    // стало
+    amountBlock = e.target.value;
+    console.log(amountBlock);
+    // было
+    // document.querySelectorAll(".primer").forEach((item) => {
+    //   item.remove();
+    // });
+    // стало
+    gamePlace.innerHTML = "";
+    // генерирует массив под выбранный размер
 
-    // формирование массива с цифрами
-    let y = x / 2;
-    console.log(x);
-    let coob = [];
+    let getArrayBlock = function (number) {
+      let x = number / 2;
+      let coob = [];
 
-    for (let i = 1; i <= y; i++) {
-      coob.push(i);
-      coob.push(i);
-    }
-    let newCoob = coob.sort(() => Math.random() - 0.5);
-    console.log(newCoob);
+      for (let i = 1; i <= x; i++) {
+        coob.push(i);
+        coob.push(i);
+      }
+      let newCoob = coob.sort(() => Math.random() - 0.5);
 
-    // создание блоков
-    for (let i = 0; i < x; i++) {
-      let primer = document.createElement("div");
-      // добавление нового свойства для написания делигирования событий
-      primer.myname = "block";
-      primer.mynamber = newCoob[i];
-      primer.repiat = i + 1;
-      primer.textContent = newCoob[i];
+      // создает блоки в зависимости от выбранного размера
+      for (let i = 0; i < amountBlock; i++) {
+        primer = document.createElement("div");
+        primer.mynamber = newCoob[i];
+        // монжо удалить но проверить?????????????????????????????
+        primer.repiat = i + 1;
+        primer.textContent = newCoob[i];
+        primer.myname = "block";
+        primer.classList.add("primer");
+        gamePlace.append(primer);
+      }
+    };
 
-      let gamePlace = document.querySelector(".gamePlace");
-      primer.classList.add("primer");
-      gamePlace.append(primer);
-    }
-    generetCssStyle();
+    // заполняет каждую ячейку числом из рандомно разбросанного массива данных и создает стили
+    // было
+    //   if (amountBlock === "4") {
+    //     let y = Math.sqrt(amountBlock);
+    //     getArrayBlock(amountBlock);
+
+    //     gamePlace.style.cssText = `
+    //   grid-template-columns: repeat(${y}, 50px);`;
+    //   } else if (amountBlock === "16") {
+    //     let y = Math.sqrt(amountBlock);
+    //     getArrayBlock(amountBlock);
+    //     gamePlace.style.cssText = `
+    //   grid-template-columns: repeat(${y}, 50px);`;
+    //   } else if (amountBlock === "64") {
+    //     let y = Math.sqrt(amountBlock);
+    //     getArrayBlock(amountBlock);
+    //     gamePlace.style.cssText = `
+    //   grid-template-columns: repeat(${y}, 50px);`;
+    //   }
+    // стало
+    let y = Math.sqrt(amountBlock);
+    getArrayBlock(amountBlock);
+    gamePlace.style.gridTemplateColumns = `repeat(${y}, 50px)`;
+    primer = document.querySelectorAll(".primer");
   });
 
-  // добавление css свйства для разметки
-  function generetCssStyle() {
-    let x = document.querySelectorAll(".primer");
-    let f = x.length;
-    let gamePlace = document.querySelector(".gamePlace");
-    let y = Math.sqrt(f);
-    switch (y) {
-      case 2:
-        gamePlace.style.cssText = `
-          grid-template-columns: repeat(${y}, 50px);`;
-        break;
-      case 4:
-        gamePlace.style.cssText = `
-          grid-template-columns: repeat(${y}, 50px);`;
-      case 16:
-        gamePlace.style.cssText = `
-          grid-template-columns: repeat(${y}, 50px);`;
-        break;
-    }
-  }
+  // делигирование событий
+  let x = [];
+  let y = [];
 
-  //  функция удаления цвета блока при неверном выборе блоков
   function removeClass() {
-    let primer = document.querySelectorAll(".primer");
     primer.forEach(function (item) {
       item.classList.remove("grey");
       item.style.color = "rgb(153, 143, 143)";
     });
   }
 
-  // делигирование событий
-  let x = [];
-  let gamePlace = document
-    .querySelector(".gamePlace")
-    .addEventListener("click", function (event) {
+  // Проверка на совпаение нового свойства блока\ пропадает если совпало
+  function click() {
+    gamePlace.addEventListener("click", function (event) {
       if (event.target && event.target.myname == "block") {
         event.target.style.color = "white";
         event.target.classList.add("grey");
         x.push(event.target.mynamber);
+        y.push(event.target.repiat);
+        // test
         console.log("номер на иконке:" + x);
+        console.log("номер по счету" + y);
       }
-      // проверка условий при нажатии на блоки
       if (x.length === 2) {
-        if (x[0] !== x[1]) {
+        if (x[0] !== x[1] || y[0] === y[1]) {
           console.log("error");
-          setTimeout(removeClass, 300);
           x = [];
+          y = [];
+          setTimeout(removeClass, 500);
         } else {
           console.log("ok");
-          document.querySelectorAll(".primer").forEach(function (item, i) {
+          primer.forEach(function (item, i) {
             if (Number(item.mynamber) === x[0]) {
               setTimeout(() => {
                 item.style.pointerEvents = "none";
@@ -97,11 +111,13 @@ document.addEventListener("DOMContentLoaded", () => {
             item.repiat = i;
           });
         }
+        y = [];
         x = [];
       }
     });
+  }
+  click();
 
-  //перезагрузка страницы при нажатии на кнопку
   let buttonClickReset = document.querySelector(".removeClick");
   buttonClickReset.addEventListener("click", function () {
     location.reload();

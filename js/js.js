@@ -3,16 +3,14 @@
 document.addEventListener("DOMContentLoaded", () => {
   let gamePlace = document.querySelector(".gamePlace");
   let select = document.querySelector(".form-select");
-  let amountBlock ;
+  let amountBlock;
   let primer;
 
-   // // изменение кол-ва блоков в зависимости от выбора
-  select.addEventListener("change", function () {
-    amountBlock = select.options[select.selectedIndex].value;
+  // изменение кол-ва блоков в зависимости от выбора
+  select.addEventListener("change", function (e) {
+    amountBlock = e.target.value;
     console.log(amountBlock);
-    document.querySelectorAll(".primer").forEach((item) => {
-      item.remove();
-    });
+    gamePlace.innerHTML = "";
     // генерирует массив под выбранный размер
 
     let getArrayBlock = function (number) {
@@ -29,13 +27,8 @@ document.addEventListener("DOMContentLoaded", () => {
       for (let i = 0; i < amountBlock; i++) {
         primer = document.createElement("div");
         primer.mynamber = newCoob[i];
-        // test
         primer.repiat = i + 1;
-        //
         primer.textContent = newCoob[i];
-        // primer.style.color = "rgb(153, 143, 143)";
-        primer.onselectstart = "return false";
-        primer.onmousedown = "return false";
         primer.myname = "block";
         primer.classList.add("primer");
         gamePlace.append(primer);
@@ -43,23 +36,10 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // заполняет каждую ячейку числом из рандомно разбросанного массива данных и создает стили
-    if (amountBlock === "4") {
-      let y = Math.sqrt(amountBlock);
-      getArrayBlock(amountBlock);
-
-      gamePlace.style.cssText = `
-    grid-template-columns: repeat(${y}, 50px);`;
-    } else if (amountBlock === "16") {
-      let y = Math.sqrt(amountBlock);
-      getArrayBlock(amountBlock);
-      gamePlace.style.cssText = `
-    grid-template-columns: repeat(${y}, 50px);`;
-    } else if (amountBlock === "64") {
-      let y = Math.sqrt(amountBlock);
-      getArrayBlock(amountBlock);
-      gamePlace.style.cssText = `
-    grid-template-columns: repeat(${y}, 50px);`;
-    }
+    let y = Math.sqrt(amountBlock);
+    getArrayBlock(amountBlock);
+    gamePlace.style.gridTemplateColumns = `repeat(${y}, 50px)`;
+    primer = document.querySelectorAll(".primer");
   });
 
   // делигирование событий
@@ -67,7 +47,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let y = [];
 
   function removeClass() {
-    primer = document.querySelectorAll(".primer");
     primer.forEach(function (item) {
       item.classList.remove("grey");
       item.style.color = "rgb(153, 143, 143)";
@@ -81,8 +60,8 @@ document.addEventListener("DOMContentLoaded", () => {
         event.target.style.color = "white";
         event.target.classList.add("grey");
         x.push(event.target.mynamber);
-        // test
         y.push(event.target.repiat);
+        // test
         console.log("номер на иконке:" + x);
         console.log("номер по счету" + y);
       }
@@ -94,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
           setTimeout(removeClass, 500);
         } else {
           console.log("ok");
-          document.querySelectorAll(".primer").forEach(function (item, i) {
+          primer.forEach(function (item, i) {
             if (Number(item.mynamber) === x[0]) {
               setTimeout(() => {
                 item.style.pointerEvents = "none";
@@ -116,6 +95,3 @@ document.addEventListener("DOMContentLoaded", () => {
     location.reload();
   });
 });
-
-// сохранить местоположение при исчезновении блоков
-// добавить отмену выделения текс
